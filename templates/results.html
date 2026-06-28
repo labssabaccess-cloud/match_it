@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="results-card">
+    <h1>Game Over!</h1>
+    <p class="accuracy-display">Your Accuracy: <strong>{{ accuracy | round(1) }}%</strong></p>
+
+    {% if accuracy == 100 %}
+        <p class="verdict">🏆 Perfect score! You have an incredible eye for color.</p>
+    {% elif accuracy >= 60 %}
+        <p class="verdict">👍 Good job! Keep practicing to sharpen your perception.</p>
+    {% else %}
+        <p class="verdict">🎨 Color perception takes practice. Try again!</p>
+    {% endif %}
+
+    <a href="/game" class="btn-play-again">Play Again</a>
+
+    <h2>🏅 Leaderboard</h2>
+    <table class="leaderboard">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Player</th>
+                <th>Accuracy</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i, row in enumerate(leaderboard) %}
+            <tr {% if row['username'] == username %}class="highlight"{% endif %}>
+                <td>{{ i + 1 }}</td>
+                <td>{{ row['username'] }}</td>
+                <td>{{ row['accuracy'] | round(1) }}%</td>
+                <td>{{ row['played_at'][:10] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

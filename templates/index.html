@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="auth-card">
+    <h1>Welcome to Match It 🎨</h1>
+    <p class="subtitle">Test your color memory. Can you spot the exact shade?</p>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST" action="/login">
+        <input type="text"     name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+
+    <p class="switch-link">Don't have an account? <a href="/register">Register</a></p>
+</div>
+{% endblock %}

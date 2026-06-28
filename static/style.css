@@ -1,0 +1,181 @@
+/* =====================================================
+   Match It — Stylesheet
+   ===================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #1a1a2e;
+    color: #eee;
+    min-height: 100vh;
+}
+
+/* ----- Navbar ----- */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+}
+.brand { font-size: 1.4rem; font-weight: bold; color: #e94560; text-decoration: none; }
+.nav-links a { color: #eee; text-decoration: none; margin-left: 1.5rem; }
+.nav-links span { color: #aaa; }
+
+/* ----- Container ----- */
+.container {
+    max-width: 700px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+}
+
+/* ----- Auth Card ----- */
+.auth-card {
+    background: #16213e;
+    border-radius: 12px;
+    padding: 2.5rem;
+    text-align: center;
+}
+.auth-card h1 { margin-bottom: 0.5rem; }
+.auth-card .subtitle { color: #aaa; margin-bottom: 1.5rem; }
+.auth-card form { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1rem; }
+.auth-card input {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #0f3460;
+    background: #1a1a2e;
+    color: #eee;
+    font-size: 1rem;
+}
+.auth-card button {
+    padding: 0.75rem;
+    background: #e94560;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+.auth-card button:hover { background: #c73652; }
+.switch-link { color: #aaa; font-size: 0.9rem; }
+.switch-link a { color: #e94560; }
+.error { color: #e94560; margin-bottom: 1rem; }
+
+/* ----- Game Wrapper ----- */
+.game-wrapper {
+    background: #16213e;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+}
+.round-info { font-size: 1.1rem; color: #aaa; margin-bottom: 1rem; }
+
+/* ----- Timer Bar ----- */
+.timer-bar-container {
+    width: 100%;
+    background: #0f3460;
+    border-radius: 8px;
+    height: 14px;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+}
+.timer-bar {
+    height: 100%;
+    background: #e94560;
+    width: 100%;
+    border-radius: 8px;
+    /*
+    TODO (TASK 3 - CSS):
+    Add a CSS transition here so the timer bar smoothly shrinks from
+    100% width to 0% over 10 seconds.
+
+    Hint: use the `transition` property with `width` and a linear timing function.
+    The JavaScript will set the width to '0%' after the image loads,
+    and this transition will handle the animation automatically.
+
+    Example structure (fill in the values):
+        transition: width ??s ??;
+    */
+}
+#timer-text { color: #aaa; font-size: 0.9rem; margin-bottom: 1rem; }
+
+/* ----- Image Area ----- */
+.image-area {
+    width: 100%;
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0f3460;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+.image-area img {
+    max-width: 100%;
+    max-height: 280px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+/* ----- Swatches ----- */
+.swatch-prompt { margin-bottom: 1rem; font-size: 1.05rem; }
+.swatches {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+/*
+TODO (TASK 3 - CSS):
+Style the swatch buttons. Each button has class `.swatch-btn` (added by game.js).
+Requirements:
+  - Width and height of 64px, making them square
+  - border-radius of 10px so they look like rounded tiles
+  - A visible border (e.g. 3px solid transparent) that turns white on hover
+  - A cursor: pointer
+  - A smooth transition on the border-color and transform properties
+  - On hover, scale the button up slightly (transform: scale(1.1))
+
+Write your CSS rule for .swatch-btn here:
+*/
+
+.feedback { font-size: 1.1rem; font-weight: bold; min-height: 1.5rem; }
+.feedback.correct { color: #2ecc71; }
+.feedback.wrong   { color: #e94560; }
+
+/* ----- Loading ----- */
+.loading-text { color: #aaa; font-style: italic; }
+
+/* ----- Results ----- */
+.results-card {
+    background: #16213e;
+    border-radius: 12px;
+    padding: 2.5rem;
+    text-align: center;
+}
+.accuracy-display { font-size: 1.8rem; margin: 1rem 0; }
+.verdict { color: #aaa; margin-bottom: 1.5rem; }
+.btn-play-again {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background: #e94560;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1rem;
+    margin-bottom: 2rem;
+}
+.btn-play-again:hover { background: #c73652; }
+.leaderboard { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+.leaderboard th, .leaderboard td { padding: 0.65rem 1rem; border-bottom: 1px solid #0f3460; text-align: left; }
+.leaderboard th { background: #0f3460; }
+.leaderboard tr.highlight { background: #1e3a5f; font-weight: bold; }

@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="game-wrapper">
+
+    <!-- Round counter -->
+    <div class="round-info">
+        <span id="round-display">Round <span id="round-num">1</span> / 5</span>
+    </div>
+
+    <!-- Timer bar -->
+    <div class="timer-bar-container">
+        <div class="timer-bar" id="timer-bar"></div>
+    </div>
+    <p id="timer-text">Memorise the image! <span id="countdown">10</span>s</p>
+
+    <!-- Image display area -->
+    <div class="image-area" id="image-area">
+        <img id="game-image" src="" alt="Memorise this image" />
+    </div>
+
+    <!-- Color swatches — hidden until timer runs out -->
+    <div class="swatches-area" id="swatches-area" style="display:none;">
+        <p class="swatch-prompt">Which color appeared in the image?</p>
+        <div class="swatches" id="swatches-container">
+            <!-- 6 swatch buttons injected by game.js -->
+        </div>
+        <p id="feedback" class="feedback"></p>
+    </div>
+
+    <!-- Loading state -->
+    <div id="loading" class="loading-text">Loading round...</div>
+
+</div>
+{% endblock %}
