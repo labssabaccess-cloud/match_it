@@ -74,7 +74,19 @@ body {
     padding: 2rem;
     text-align: center;
 }
-.round-info { font-size: 1.1rem; color: #aaa; margin-bottom: 1rem; }
+.round-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+    color: #aaa;
+    margin-bottom: 1rem;
+}
+.live-score {
+    font-weight: bold;
+    color: #e94560;
+    font-size: 1.1rem;
+}
 
 /* ----- Timer Bar ----- */
 .timer-bar-container {
@@ -162,8 +174,8 @@ Write your CSS rule for .swatch-btn here:
     padding: 2.5rem;
     text-align: center;
 }
-.accuracy-display { font-size: 1.8rem; margin: 1rem 0; }
-.verdict { color: #aaa; margin-bottom: 1.5rem; }
+.score-display { font-size: 2rem; margin: 1rem 0; }
+.verdict { color: #aaa; margin-bottom: 1.5rem; font-size: 1.1rem; }
 .btn-play-again {
     display: inline-block;
     padding: 0.75rem 2rem;

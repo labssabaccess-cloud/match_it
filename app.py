@@ -32,7 +32,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS scores (
             id         INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id    INTEGER NOT NULL,
-            accuracy   REAL    NOT NULL,
+            score      INTEGER NOT NULL,
             played_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)
         )
@@ -146,9 +146,9 @@ def logout():
 def game():
     if not session.get("user_id"):
         return redirect("/")
-    # Initialise round tracking in session
+    # Initialise round tracking and score in session
     session["round"] = 1
-    session["correct"] = 0
+    session["score"] = 0  # accumulates 0 or 1 per round, max 5
     return render_template("game.html", username=session["username"])
 
 
@@ -157,9 +157,9 @@ def game_next():
     """
     Returns JSON for the current round:
       {
-        "round":       <int 1-5>,
-        "image_url":   <string>,
-        "swatches":    ["#HEX", "#HEX", "#HEX", "#HEX", "#HEX", "#HEX"],
+        "round":        <int 1-5>,
+        "image_url":    <string>,
+        "swatches":     ["#HEX", "#HEX", "#HEX", "#HEX", "#HEX", "#HEX"],
         "answer_index": <int 0-5>   <- index of correct swatch
       }
 
@@ -185,21 +185,26 @@ def game_submit():
       { "selected_index": <int>, "answer_index": <int> }
 
     Returns JSON:
-      { "correct": <bool>, "round": <int>, "done": <bool> }
+      { "correct": <bool>, "round_score": <int 0 or 1>,
+        "total_score": <int>, "round": <int>, "done": <bool> }
 
     TODO (TASK 2):
     -------------------------
     1. Parse the JSON body from request.get_json().
     2. Compare selected_index == answer_index to determine correctness.
-    3. If correct, increment session["correct"] by 1.
-    4. Increment session["round"] by 1.
-    5. If session["round"] > 5 (all rounds done):
-       a. Calculate accuracy = (session["correct"] / 5) * 100
+    3. Award round_score = 1 if correct, 0 if wrong.
+    4. Add round_score to session["score"].
+    5. Increment session["round"] by 1.
+    6. If session["round"] > 5 (all rounds done):
+       a. final_score = session["score"]  (integer, 0-5)
        b. Save to the `scores` table:
-              INSERT INTO scores (user_id, accuracy) VALUES (?, ?)
-       c. Store accuracy in session["last_accuracy"] for the results page.
-       d. Return jsonify({"correct": ..., "round": 5, "done": True})
-    6. Otherwise return jsonify({"correct": ..., "round": session["round"], "done": False})
+              INSERT INTO scores (user_id, score) VALUES (?, ?)
+       c. Store in session["last_score"] for the results page.
+       d. Return jsonify({"correct": ..., "round_score": ...,
+                          "total_score": final_score, "round": 5, "done": True})
+    7. Otherwise return jsonify({"correct": ..., "round_score": ...,
+                                 "total_score": session["score"],
+                                 "round": session["round"], "done": False})
     """
     # TODO: replace this placeholder response
     return jsonify({"error": "Not implemented yet"}), 501
@@ -209,16 +214,17 @@ def game_submit():
 def results():
     if not session.get("user_id"):
         return redirect("/")
-    accuracy = session.get("last_accuracy", 0)
+    # final_score is an integer 0-5
+    final_score = session.get("last_score", 0)
     # Fetch top 10 leaderboard scores
     leaderboard = db.execute("""
-        SELECT users.username, scores.accuracy, scores.played_at
+        SELECT users.username, scores.score, scores.played_at
         FROM scores
         JOIN users ON scores.user_id = users.id
-        ORDER BY scores.accuracy DESC
+        ORDER BY scores.score DESC
         LIMIT 10
     """)
     return render_template("results.html",
-                           accuracy=accuracy,
+                           final_score=final_score,
                            leaderboard=leaderboard,
                            username=session["username"])

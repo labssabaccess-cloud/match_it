@@ -5,7 +5,7 @@
  *   2. Display image for 10 seconds with countdown timer
  *   3. Hide image and show color swatches
  *   4. Submit answer to /game/submit
- *   5. Show feedback and load next round or redirect to /results
+ *   5. Show feedback (round score) and load next round or redirect to /results
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const timerBar      = document.getElementById('timer-bar');
     const roundNumEl    = document.getElementById('round-num');
     const loadingEl     = document.getElementById('loading');
+    const runningScore  = document.getElementById('running-score'); // shows live score
 
     let currentAnswerIndex = null;  // correct swatch index for current round
     let countdownInterval  = null;  // holds the setInterval reference
@@ -31,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         swatchesArea.style.display = 'none';
         imageArea.style.display    = 'none';
         feedbackEl.textContent     = '';
+        feedbackEl.className       = 'feedback';
         loadingEl.style.display    = 'block';
 
         fetch('/game/next')
@@ -120,24 +122,33 @@ document.addEventListener('DOMContentLoaded', () => {
         Steps:
           1. Use fetch('/game/submit', { method: 'POST', ... }) to POST JSON:
                { "selected_index": selectedIndex, "answer_index": currentAnswerIndex }
-             Make sure to set the Content-Type header to 'application/json'.
+             Set Content-Type header to 'application/json'.
              Use JSON.stringify() on the body.
 
           2. Parse the JSON response.
 
           3. If response.correct is true:
-             - Set feedbackEl.textContent to '✅ Correct!'
+             - Set feedbackEl.textContent to
+               '✅ Correct! +1  |  Score: X / 5'
+               where X = response.total_score
              - Add class 'correct' to feedbackEl (remove 'wrong' if present)
 
           4. If response.correct is false:
-             - Set feedbackEl.textContent to '❌ Wrong! The answer was swatch #(answer_index + 1)'
+             - Set feedbackEl.textContent to
+               '❌ Wrong!  |  Score: X / 5'
+               where X = response.total_score
              - Add class 'wrong' to feedbackEl (remove 'correct' if present)
-             - Optionally highlight the correct swatch button with a white border
+             - Highlight the correct swatch button with a white border:
+               document.querySelectorAll('.swatch-btn')[currentAnswerIndex]
+                       .style.border = '3px solid white';
 
-          5. After a 1500ms delay (using setTimeout), call loadRound() again
+          5. Update the live score display:
+               runningScore.textContent = response.total_score + ' / 5';
+
+          6. After a 1500ms delay (using setTimeout), call loadRound() again
              to move to the next round (or redirect to /results if done).
 
-        Hint: fetch with POST + JSON body looks like:
+        Hint: fetch with POST + JSON body:
             fetch('/game/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

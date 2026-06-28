@@ -4,7 +4,9 @@
 
 Match It is a color memory game built with Flask, JavaScript, SQL, HTML, and CSS.
 An image is shown for 10 seconds. After it disappears, the user selects the correct
-color from 6 swatches. The game lasts 5 rounds, and the user receives an accuracy rating.
+color from 6 swatches. The game lasts 5 rounds.
+
+**Scoring:** Each round is worth 1 point (correct = 1, wrong = 0). Maximum score is **5 / 5**.
 
 This spec is structured like a CS50 problem set. The distribution code is provided in `app.py`,
 `game.js`, and `style.css` with placeholder `TODO` comments. Your job is to implement each task.
@@ -32,11 +34,14 @@ Complete the `game_submit()` function.
 
 **Requirements:**
 - Parse incoming JSON: `selected_index` and `answer_index`.
-- Determine whether the answer is correct by comparing the two indices.
-- Increment `session["correct"]` if correct.
+- Award `round_score = 1` if correct, `0` if wrong.
+- Add `round_score` to `session["score"]`.
 - Increment `session["round"]` each time.
-- When all 5 rounds are complete, calculate accuracy and save it to the `scores` table.
-- Return JSON with keys: `correct` (bool), `round` (int), `done` (bool).
+- When all 5 rounds are complete:
+  - `final_score = session["score"]` (integer, 0–5)
+  - Save to the `scores` table: `INSERT INTO scores (user_id, score) VALUES (?, ?)`
+  - Store in `session["last_score"]` for the results page.
+- Return JSON with keys: `correct` (bool), `round_score` (int), `total_score` (int), `round` (int), `done` (bool).
 
 ---
 
@@ -86,16 +91,17 @@ Complete `handleSwatchClick()` with a `fetch` POST request.
 **Requirements:**
 - POST to `/game/submit` with `Content-Type: application/json`.
 - Body must contain `selected_index` and `answer_index`.
-- On correct: show `✅ Correct!` in green.
-- On wrong: show `❌ Wrong!` in red and highlight the correct swatch.
-- After 1500ms, call `loadRound()` to advance to the next round.
+- On correct: show `✅ Correct! +1  |  Score: X / 5` in green.
+- On wrong: show `❌ Wrong!  |  Score: X / 5` in red; highlight the correct swatch with a white border.
+- Update the live score display: `runningScore.textContent = response.total_score + ' / 5'`.
+- After 1500ms, call `loadRound()` to advance.
 
 ---
 
 ## Seeding Images
 
-Before you can test the game, you need to populate the `images` table.
-Place cartoon PNG/JPG files in `static/images/` and run this in your Flask shell:
+Before you can test the game, populate the `images` table.
+Place cartoon PNG/JPG files in `static/images/` and run in your Flask shell:
 
 ```python
 from app import db
@@ -103,19 +109,19 @@ db.execute("INSERT INTO images (filename, target_hex, label) VALUES (?, ?, ?)",
            'mickey.png', '#F4A460', 'Mickey Mouse skin tone')
 ```
 
-Repeat for each image. The `target_hex` should be a color visually present in that image.
+Repeat for each image. `target_hex` must be a hex color visually present in that image.
 
 ---
 
 ## Grading Criteria (self-check)
 
-| Criterion                     | Points |
-|-------------------------------|--------|
-| User auth (register/login)    | 20     |
-| `/game/next` returns valid JSON | 20   |
-| `/game/submit` saves score    | 20     |
-| Timer works correctly         | 15     |
-| Swatch click + feedback       | 15     |
-| CSS styling (swatches + bar)  | 10     |
-| Bonus: distractor algorithm   | +10    |
-| **Total**                     | **100 (+10)** |
+| Criterion                       | Points |
+|---------------------------------|--------|
+| User auth (register/login)      | 20     |
+| `/game/next` returns valid JSON | 20     |
+| `/game/submit` saves score      | 20     |
+| Timer works correctly           | 15     |
+| Swatch click + feedback         | 15     |
+| CSS styling (swatches + bar)    | 10     |
+| Bonus: distractor algorithm     | +10    |
+| **Total**                       | **100 (+10)** |
